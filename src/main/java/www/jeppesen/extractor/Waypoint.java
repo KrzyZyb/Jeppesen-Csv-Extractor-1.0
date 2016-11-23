@@ -13,7 +13,18 @@ public class Waypoint {
 public Waypoint(String country, String country2, String ICAO, String WPT_id, String latitude, String longitude){
 	this.country1=country;
 	this.country2=country2;
-	this.country=(country1.concat(country2));
+	this.country=(country1.concat(",").concat(country2));
+	this.ICAO=ICAO;
+	this.WPT_id=WPT_id;
+	this.latitude=latitude;
+	this.longitude=longitude;
+	this.longxlati=latitude.concat(longitude);
+}
+
+public Waypoint(String country, String ICAO, String WPT_id, String latitude, String longitude){
+	this.country1=country;
+	this.country2="";
+	this.country=country;
 	this.ICAO=ICAO;
 	this.WPT_id=WPT_id;
 	this.latitude=latitude;
@@ -23,7 +34,7 @@ public Waypoint(String country, String country2, String ICAO, String WPT_id, Str
 
 @Override
 public String toString() {
-	String waypointString = (country1+","+country2+","+ICAO+","+WPT_id+","+latitude+","+longitude);
+	String waypointString = (country+","+ICAO+","+WPT_id+","+latitude+","+longitude);
 	return waypointString;
 }
 

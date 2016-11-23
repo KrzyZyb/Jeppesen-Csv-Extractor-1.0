@@ -14,21 +14,12 @@ public class ExtractorRunner {
 	public ExtractorRunner() throws URISyntaxException{
 		File jarFilePath = new File(this.getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
 		jarParentPath = jarFilePath.getParentFile().getPath();
-		String jadPath = "\\JAD.csv";
-		String opsPath = "\\OpsData.csv";
-		jadPathFull = jarParentPath.concat(jadPath);
-		opsPathFull = jarParentPath.concat(opsPath);
-		System.out.println(jadPathFull);
-		System.out.println(opsPathFull);
-		JADcsv = new File(jadPathFull);
-		OPScsv = new File(opsPathFull);
+		JADcsv = new File(jarParentPath.concat("\\JAD.csv"));
+		OPScsv = new File(jarParentPath.concat("\\OpsData.csv"));
 	}
 	String jarParentPath;
-	String  jarFilePath;
 	File JADcsv;
 	File OPScsv;
-    String jadPathFull;
-    String opsPathFull;
 	FileReader JADfile; 
 	FileReader OPSfile; 
 	
@@ -46,8 +37,15 @@ public class ExtractorRunner {
 		while(JADscan.hasNextLine()){
 			String JADline = JADscan.nextLine();
 			String[] JADlineSplitter = JADline.split(",");
+			if(JADlineSplitter.length==6){
 			Waypoint JAD_Waypoint = new Waypoint(JADlineSplitter[0],JADlineSplitter[1],JADlineSplitter[2],JADlineSplitter[3],JADlineSplitter[4],JADlineSplitter[5]);
 			JADData.add(JAD_Waypoint);
+			}
+			if(JADlineSplitter.length==5){
+			Waypoint JAD_Waypoint = new Waypoint(JADlineSplitter[0],JADlineSplitter[1],JADlineSplitter[2],JADlineSplitter[3],JADlineSplitter[4]);
+			JADData.add(JAD_Waypoint);
+			}
+
 		}
 		}catch(NullPointerException e){
 			System.out.println("Error: JAD.csv file is not available ");
@@ -65,8 +63,15 @@ public class ExtractorRunner {
 		while(OPSscan.hasNextLine()){
 			String OPSline = OPSscan.nextLine();
 			String[] OPSlineSplitter = OPSline.split(",");
+			if(OPSlineSplitter.length==6){
 			Waypoint OPS_Waypoint = new Waypoint(OPSlineSplitter[0], OPSlineSplitter[1], OPSlineSplitter[2], OPSlineSplitter[3],OPSlineSplitter[4],OPSlineSplitter[5]);
 			OPSData.add(OPS_Waypoint);
+			}
+			if(OPSlineSplitter.length==5){
+				Waypoint OPS_Waypoint = new Waypoint(OPSlineSplitter[0], OPSlineSplitter[1], OPSlineSplitter[2], OPSlineSplitter[3],OPSlineSplitter[4]);
+				OPSData.add(OPS_Waypoint);
+
+			}
 		}
 		}catch(NullPointerException e){
 			System.out.println("Error: OPS.csv file is not available ");
