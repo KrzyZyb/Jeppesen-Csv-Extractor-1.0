@@ -10,7 +10,24 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Scanner;
 
+/*
+ * Extractor Runner Reads searches and reads two CSV files (JAD.csv & OpsData.csv)
+ * Every line in those files represents a waypoint. Extractor Runner scans this data
+ * looking if there are some same waypoints in both files. If there are ExtractRunners 
+ * searches for changes in those waypoints. Finally it creates a csv File which
+ * contains a list of waypoints that are concurrent in both files, but have been
+ * changed. A changed waypoint is a waypoint in which:
+ * OPS WPT_id is not equal to JAD Wpt_id, but OPS longxlati is OPS equal to JAD longxlati
+ * or
+ * OPS WPT_id isequal to JAD Wpt_id, but OPS longxlati is not OPS equal to JAD longxlati
+ */
+
 public class ExtractorRunner {
+	/*
+	 * Constructor gets the path of the folder in wich the JAR file of the program
+	 * is held. When the program is runned it searches for JAD.csv and OPSData.csv
+	 * in the same path in which the JAR is held.
+	 */
 	public ExtractorRunner() throws URISyntaxException{
 		File jarFilePath = new File(this.getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
 		jarParentPath = jarFilePath.getParentFile().getPath();
@@ -25,13 +42,18 @@ public class ExtractorRunner {
 	
 	private LinkedList<Waypoint> JADData = new LinkedList<Waypoint>();
 	private LinkedList<Waypoint> OPSData = new LinkedList<Waypoint>();
-	private LinkedList<Waypoint> Pre_WPTData = new LinkedList<Waypoint>();
 	private LinkedList<Waypoint> WPTData = new LinkedList<Waypoint>();
-
+	WaypointRaport raport = new WaypointRaport();
 	
+	/*
+	 * Loads the JAD.csv file from the same directory in which JAR file is held
+	 * Splits every line by "," and creates a LinkedList of Waypoint objects.
+	 * @return LinkedList of Waypoint objects created from every JAD.csv line
+	 */
 	LinkedList<Waypoint> loadJAD(){
 		try{
 			JADfile = new FileReader(JADcsv);
+			@SuppressWarnings("resource")
 			Scanner JADscan = new Scanner(JADfile);
 			
 		while(JADscan.hasNextLine()){
@@ -52,12 +74,19 @@ public class ExtractorRunner {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		raport.setJADLength(JADData.size()); //Adds the size of JAD.csv to raport
 		return JADData;
 	}
 	
+	/*
+	 * Loads the OpsData.csv file from the same directory in which JAR file is held
+	 * Splits every line by "," and creates a LinkedList of Waypoint objects.
+	 * @return LinkedList of Waypoint objects created from every OpsData.csv line
+	 */
 	LinkedList<Waypoint> loadOPS(){
 		try{
 			OPSfile = new FileReader(OPScsv);
+			@SuppressWarnings("resource")
 			Scanner OPSscan = new Scanner(OPSfile);
 
 		while(OPSscan.hasNextLine()){
@@ -70,7 +99,6 @@ public class ExtractorRunner {
 			if(OPSlineSplitter.length==5){
 				Waypoint OPS_Waypoint = new Waypoint(OPSlineSplitter[0], OPSlineSplitter[1], OPSlineSplitter[2], OPSlineSplitter[3],OPSlineSplitter[4]);
 				OPSData.add(OPS_Waypoint);
-
 			}
 		}
 		}catch(NullPointerException e){
@@ -78,11 +106,22 @@ public class ExtractorRunner {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	raport.setOPSLength(OPSData.size()); //Adds the size of OpsData.csv to raport
 	return OPSData;
 	}
-
+	
+	/*
+	 * Compares two LinkedLists of Waypoint objects and creates a third Linked
+	 * which is a result of comparsion. This method searches JAD collection for
+	 * the same elements in JAD and OPS. An element is the same when it has the same
+	 * WPT_id or longxlati.
+	 * @param LinkedList<Waypoint>JAD, LinkedList<Waypoint>OPS, - bot are valid 
+	 * collections of Waypoint objects.
+	 * @return LinkedList that contains the same Waypoints found both in JAD and OPS
+	 */
 	LinkedList<Waypoint> compareCSV(LinkedList<Waypoint> JAD, LinkedList<Waypoint> OPS){
-		int counter = 0;
+		int counter = 0; //Number of comparsions for the raport textfile
+		int diffs = 0; //Number of differences found in comparsion
 		ListIterator<Waypoint> itOPS = OPS.listIterator();
 		ListIterator<Waypoint> itJAD;
 
@@ -94,46 +133,43 @@ public class ExtractorRunner {
                 if((OPSwaypoint.toString()).equals(JADwaypoint.toString())){
                     continue A;
                 }else{
-                    if(!itJAD.hasNext()){ // If there were no identical lines then...
-                    	Pre_WPTData.add(OPSwaypoint);
+                	if((OPSwaypoint.getWPT_id().equals(JADwaypoint.getWPT_id())&&!OPSwaypoint.getLongxlati().equals(JADwaypoint.getLongxlati()))||(!OPSwaypoint.getWPT_id().equals(JADwaypoint.getWPT_id())&&OPSwaypoint.getLongxlati().equals(JADwaypoint.getLongxlati()))){
+                		if(OPSwaypoint.getCountry().equals(JADwaypoint.getCountry())){ //Do not mention if waypoints have same ID but are in different countries
+                    	WPTData.add(OPSwaypoint);
+                    	raport.Differences(JADwaypoint.toString(), OPSwaypoint.toString());
+                    	diffs++;
+                		}
                     }
                 }
                 counter++;
             }
         }
-        return WPTVerify();
+		raport.setTests(counter); //Adds number of tests to raport
+		raport.setChangesFound(diffs); //Adds number of tests to raport
+        return WPTData;
 	}
 	
-	public LinkedList<Waypoint> WPTVerify(){
-		ListIterator<Waypoint> itPreWPTData = Pre_WPTData.listIterator();
-		ListIterator<Waypoint> itJAD;
-		
-		A: while(itPreWPTData.hasNext()){
-            Waypoint OPSWaypoint = itPreWPTData.next();
-            itJAD = JADData.listIterator();
-            
-            while(itJAD.hasNext()){
-            	Waypoint JADWaypoint = itJAD.next();
-            	if(OPSWaypoint.getLongxlati().equals(JADWaypoint.getLongxlati())&&OPSWaypoint.getWPT_id().equals(JADWaypoint.getWPT_id())){
-            		continue A;
-            	}
-            }
-    		WPTData.add(OPSWaypoint);
-		}
-		return WPTData;
-	}
-	public void printWPT(LinkedList<Waypoint> extractedWaypointList){
+	/*
+	 * Creates the csv file in the location in which  JAR file was runned
+	 * the file positions are formatted just as the  required data csv files:
+	 * JAD.csv and OpsData.csv
+	 * @param 
+	 */
+	public void createWPTcsv(LinkedList<Waypoint> extractedWaypointList){
 		String WPTString = "\\WPTData.csv";
 		String WPTpath = jarParentPath.concat(WPTString);
 		File WPTcsvFile = new File(WPTpath);
 		try {
 			PrintWriter WPTcsvWriter = new PrintWriter(WPTcsvFile);
-			for(Waypoint waypoint:WPTData){
+			for(Waypoint waypoint:extractedWaypointList){
 			WPTcsvWriter.println(waypoint.toString());
 			}
 			WPTcsvWriter.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
+	}
+	public void printRaport(){
+		raport.printRaport();
 	}
 }

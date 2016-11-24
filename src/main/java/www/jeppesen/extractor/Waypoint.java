@@ -1,9 +1,11 @@
 package www.jeppesen.extractor;
 
+/*
+ * Regular Waypoint is a object representation of every line in cvs data bases:
+ * JAD.csv, OpsData.csv and WPTData.csv
+ */
 public class Waypoint {
 	private String country;
-	private String country1;
-	private String country2;
 	private String ICAO;
 	private String WPT_id;
 	private String latitude;
@@ -11,9 +13,7 @@ public class Waypoint {
 	private String longxlati;
 
 public Waypoint(String country, String country2, String ICAO, String WPT_id, String latitude, String longitude){
-	this.country1=country;
-	this.country2=country2;
-	this.country=(country1.concat(",").concat(country2));
+	this.country=(country.concat(",").concat(country2));
 	this.ICAO=ICAO;
 	this.WPT_id=WPT_id;
 	this.latitude=latitude;
@@ -22,8 +22,6 @@ public Waypoint(String country, String country2, String ICAO, String WPT_id, Str
 }
 
 public Waypoint(String country, String ICAO, String WPT_id, String latitude, String longitude){
-	this.country1=country;
-	this.country2="";
 	this.country=country;
 	this.ICAO=ICAO;
 	this.WPT_id=WPT_id;
@@ -44,5 +42,8 @@ public String getWPT_id() {
 
 public String getLongxlati() {
 	return longxlati;
+}
+public String getCountry() {
+	return country;
 }
 }
