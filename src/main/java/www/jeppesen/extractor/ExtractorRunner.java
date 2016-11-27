@@ -148,6 +148,18 @@ public class ExtractorRunner {
                 counter++;
             }
         }
+		// Comparing OPS and WPT for lacking Waypoints
+		itOPS = OPS.listIterator();
+		while(itOPS.hasNext()){
+            Waypoint OPSwaypoint = itOPS.next();
+            if(!JADDatacontains(OPSwaypoint)){
+            	WPTData.add(OPSwaypoint);
+            	raport.Differences("---", OPSwaypoint.toString(), "Waypoint not found");
+            	diffs++;
+            }
+          counter++;
+          }
+		
 		raport.setTests(counter); //Adds number of tests to raport
 		raport.setChangesFound(diffs); //Adds number of tests to raport
         return WPTData;
@@ -175,5 +187,28 @@ public class ExtractorRunner {
 	}
 	public void printRaport(){
 		raport.printRaport();
+	}
+	
+	/*
+	 * Checks the JADData for existence of particular waypoint. The purpouse is to find
+	 * a Waypoint which exists in OPSData, but is not included in JADData
+	 * @param waypoint w for which it is checked to exist in JADData
+	 */
+	public boolean JADDatacontains(Waypoint w){
+		for(Waypoint wpt: JADData){
+			if(wpt.toString().equals(w.toString())){
+				return true;
+			}else if((wpt.getWPT_id().equals(w.getWPT_id())&&!wpt.getLongxlati().equals(w.getLongxlati()))){
+				return true;
+			}else if((!wpt.getWPT_id().equals(w.getWPT_id())&&wpt.getLongxlati().equals(w.getLongxlati()))){
+				return true;
+			}else if(wpt.getWPT_id().equals(w.getWPT_id())){
+				return true;
+			}else if(wpt.getLongxlati().equals(w.getLongxlati())){
+				return true;
+			}
+		}
+		return false;
+		
 	}
 }
