@@ -132,14 +132,18 @@ public class ExtractorRunner {
                 Waypoint JADwaypoint = itJAD.next();   
                 if((OPSwaypoint.toString()).equals(JADwaypoint.toString())){
                     continue A;
-                }else{
-                	if((OPSwaypoint.getWPT_id().equals(JADwaypoint.getWPT_id())&&!OPSwaypoint.getLongxlati().equals(JADwaypoint.getLongxlati()))||(!OPSwaypoint.getWPT_id().equals(JADwaypoint.getWPT_id())&&OPSwaypoint.getLongxlati().equals(JADwaypoint.getLongxlati()))){
+                }else if((OPSwaypoint.getWPT_id().equals(JADwaypoint.getWPT_id())&&!OPSwaypoint.getLongxlati().equals(JADwaypoint.getLongxlati()))){
                 		if(OPSwaypoint.getCountry().equals(JADwaypoint.getCountry())){ //Do not mention if waypoints have same ID but are in different countries
                     	WPTData.add(OPSwaypoint);
-                    	raport.Differences(JADwaypoint.toString(), OPSwaypoint.toString());
+                    	raport.Differences(JADwaypoint.toString(), OPSwaypoint.toString(), "Possible missmatch in coordinates.");
                     	diffs++;
                 		}
-                    }
+                }else if((!OPSwaypoint.getWPT_id().equals(JADwaypoint.getWPT_id())&&OPSwaypoint.getLongxlati().equals(JADwaypoint.getLongxlati()))){
+                		if(OPSwaypoint.getCountry().equals(JADwaypoint.getCountry())){ //Do not mention if waypoints have same ID but are in different countries
+                    	WPTData.add(OPSwaypoint);
+                    	raport.Differences(JADwaypoint.toString(), OPSwaypoint.toString(), "Possible missmatch in Waypoint ID's");
+                    	diffs++;
+                		}
                 }
                 counter++;
             }

@@ -25,7 +25,8 @@ public class WaypointRaport {
 	int changesFound;
 	ArrayList<String> StringDiff = new ArrayList<String>();
 	
-	void Differences(String JAD, String OPS){
+	void Differences(String JAD, String OPS, String Status){
+		StringDiff.add("Status: "+Status);
 		StringDiff.add("JAD: "+JAD);
 		StringDiff.add("OPS: "+OPS);
 		StringDiff.add("***");
