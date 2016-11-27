@@ -202,8 +202,6 @@ public class ExtractorRunner {
 				return true;
 			}else if((!wpt.getWPT_id().equals(w.getWPT_id())&&wpt.getLongxlati().equals(w.getLongxlati()))){
 				return true;
-			}else if(wpt.getWPT_id().equals(w.getWPT_id())){
-				return true;
 			}else if(wpt.getLongxlati().equals(w.getLongxlati())){
 				return true;
 			}
