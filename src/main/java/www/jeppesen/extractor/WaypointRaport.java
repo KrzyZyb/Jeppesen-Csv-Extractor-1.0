@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.net.URISyntaxException;
-import java.time.Instant;
 import java.util.ArrayList;
 
 /* 
@@ -24,7 +23,15 @@ public class WaypointRaport {
 	int Tests;
 	int changesFound;
 	ArrayList<String> StringDiff = new ArrayList<String>();
-	
+
+	/*
+	 * Takes the same waypoint from OPS and JAD and adds differences between them
+	 * to the raport file
+	 * @param JAD - valid string representation od JAD waypoint
+	 * @param OPS - valid string representation od OPS waypoint
+	 * @param Status - Info about differences between both waypoints
+	 */
+
 	void Differences(String JAD, String OPS, String Status){
 		StringDiff.add("Status: "+Status);
 		StringDiff.add("JAD: "+JAD);
@@ -43,19 +50,25 @@ public class WaypointRaport {
 	public void setChangesFound(int changes) {
 		this.changesFound = changes;
 	}
+	
+	/*
+	 * Creates raport file that contains details about comparing process and differences
+	 * between JAD and OPS versions of waypoints
+	 */
 	public void printRaport(){
 		Raporttxt = new File(jarParentPath.concat("\\WPTDataRaport.txt"));
 		try{
 			PrintWriter writer = new PrintWriter(Raporttxt);
+			writer.println("WPT DATA RAPORT:");
 			writer.println("****************************************");
-			writer.println("Raport date: "+Instant.now());
-			writer.println();
+			writer.println("Comparsion process details:");
 			writer.println("JAD Data Base size: " +JADLength);
 			writer.println("OPS Data Base size: " +OPSLength);
 			writer.println("Tests provided: " +Tests);
 			writer.println("Differences found: " +changesFound);
+			writer.println("****************************************");
+			writer.println("Possible differences in JAD/OPS waypoint versions: ");
 			writer.println();
-			writer.println("Possible changes in Waypoints: ");
 			for(String line:StringDiff){
 				writer.println(line);
 			}
