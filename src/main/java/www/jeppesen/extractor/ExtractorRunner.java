@@ -11,7 +11,7 @@ import java.util.ListIterator;
 import java.util.Scanner;
 
 /*
- * Extractor Runner Reads searches and reads two CSV files (JAD.csv & OpsData.csv)
+ * Extractor Runner searches for two CSV files (JAD.csv & OpsData.csv) and reads them.
  * Every line in those files represents a waypoint. Extractor Runner scans this data
  * looking if there are some same waypoints in both files. If there are ExtractRunners 
  * searches for changes in those waypoints. Finally it creates a csv File which
