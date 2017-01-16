@@ -17,9 +17,9 @@ import java.util.Scanner;
  * searches for changes in those waypoints. Finally it creates a csv File which
  * contains a list of waypoints that are concurrent in both files, but have been
  * changed. A changed waypoint is a waypoint in which:
- * OPS WPT_id is not equal to JAD Wpt_id, but OPS longxlati is OPS equal to JAD longxlati
+ * OPS WPT_id is not equal to JAD Wpt_id, but OPS longxlati is equal to JAD longxlati
  * or
- * OPS WPT_id isequal to JAD Wpt_id, but OPS longxlati is not OPS equal to JAD longxlati
+ * OPS WPT_id is equal to JAD Wpt_id, but OPS longxlati is not equal to JAD longxlati
  */
 
 public class ExtractorRunner {
